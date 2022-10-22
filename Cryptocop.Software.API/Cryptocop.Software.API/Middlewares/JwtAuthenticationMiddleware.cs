@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using Cryptocop.Software.API.Services.Interfaces;
@@ -34,19 +35,19 @@ namespace Cryptocop.Software.API.Middlewares
                 };
                 x.Events = new JwtBearerEvents
                 {
-                    OnTokenValidated = async context =>
+                    OnTokenValidated = context =>
                     {
-                        var claim = context.Principal.Claims.FirstOrDefault(c => c.Type == "tokenId")?.Value;
-                        int.TryParse(claim, out var tokenId);
+                        var claim = context.Principal?.Claims.FirstOrDefault(c => c.Type == "tokenId")?.Value;
+                        if (!int.TryParse(claim, out var tokenId)) { return Task.CompletedTask; }
+
                         var accountService = context.HttpContext.RequestServices.GetService<IJwtTokenService>();
 
-                        if (accountService.IsTokenBlacklisted(tokenId))
+                        if (accountService != null && accountService.IsTokenBlacklisted(tokenId))
                         {
-
-                            context.Response.StatusCode = 401;
-                            await context.Response.WriteAsync("JWT token provided is invalid.");
-
+                            context.Fail("JWT token provided is invalid.");
                         }
+
+                        return Task.CompletedTask;
                     }
                 };
             });
