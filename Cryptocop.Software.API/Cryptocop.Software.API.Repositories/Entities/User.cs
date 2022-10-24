@@ -11,5 +11,7 @@ namespace Cryptocop.Software.API.Repositories.Entities
         public string FullName {get; set;}
         public string Email {get; set;}
         public string HashedPassword {get; set;}
+
+        public ICollection<Address> Addresses {get; set;}
     }
 }
