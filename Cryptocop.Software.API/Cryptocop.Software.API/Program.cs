@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 using Cryptocop.Software.API.Extensions;
 using Cryptocop.Software.API.Middlewares;
@@ -15,6 +16,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CryptoCopDbContext>(options => {
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"),
     b => b.MigrationsAssembly("Cryptocop.Software.API"));
+});
+
+builder.Services.AddHttpClient<IExchangeService, ExchangeService>(client => {
+    client.BaseAddress = new Uri("https://data.messari.io/api/");
+});
+
+builder.Services.AddHttpClient<ICryptoCurrencyService, CryptoCurrencyService>(client => {
+    client.BaseAddress = new Uri("https://data.messari.io/api/");
 });
 
 builder.Services.AddAuthentication(config =>
@@ -47,6 +56,9 @@ builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
 builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
+builder.Services.AddTransient<IAddressService, AddressService>();
+builder.Services.AddTransient<IAddressRepository, AddressRepository>();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
