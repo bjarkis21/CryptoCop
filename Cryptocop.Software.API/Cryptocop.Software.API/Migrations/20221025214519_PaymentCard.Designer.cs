@@ -2,6 +2,7 @@
 using Cryptocop.Software.API.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cryptocop.Software.API.Migrations
 {
     [DbContext(typeof(CryptoCopDbContext))]
-    partial class CryptoCopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221025214519_PaymentCard")]
+    partial class PaymentCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,53 +99,7 @@ namespace Cryptocop.Software.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PaymentCards");
-                });
-
-            modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.ShoppingCart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("ShoppingCarts");
-                });
-
-            modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.ShoppingCartItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ProductIdentifier")
-                        .HasColumnType("text");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("UnitPrice")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShoppingCartId");
-
-                    b.ToTable("ShoppingCartItems");
+                    b.ToTable("PaymentCard");
                 });
 
             modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.User", b =>
@@ -190,40 +146,11 @@ namespace Cryptocop.Software.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.ShoppingCart", b =>
-                {
-                    b.HasOne("Cryptocop.Software.API.Repositories.Entities.User", "User")
-                        .WithOne("ShoppingCart")
-                        .HasForeignKey("Cryptocop.Software.API.Repositories.Entities.ShoppingCart", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.ShoppingCartItem", b =>
-                {
-                    b.HasOne("Cryptocop.Software.API.Repositories.Entities.ShoppingCart", "ShoppingCart")
-                        .WithMany("ShoppingCartItems")
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingCart");
-                });
-
-            modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.ShoppingCart", b =>
-                {
-                    b.Navigation("ShoppingCartItems");
-                });
-
             modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.User", b =>
                 {
                     b.Navigation("Addresses");
 
                     b.Navigation("PaymentCards");
-
-                    b.Navigation("ShoppingCart");
                 });
 #pragma warning restore 612, 618
         }

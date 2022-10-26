@@ -22,7 +22,7 @@ namespace Cryptocop.Software.API.Services.Implementations
 
         public async Task<IEnumerable<CryptoCurrencyDto>> GetAvailableCryptocurrencies()
         {
-            var response = await _httpClient.GetAsync($"v2/assets?fields=id,slug,symbol,metrics/market_data/price_usd,profile/general/overview/project_details,name");
+            var response = await _httpClient.GetAsync($"v2/assets?fields=id,slug,symbol,metrics/market_data/price_usd,profile/general/overview/project_details,name&limit=500");
             if (!response.IsSuccessStatusCode) return new List<CryptoCurrencyDto>();
 
             var content = await response.DeserializeJsonToList<CryptoCurrencyDto>(flatten: true);

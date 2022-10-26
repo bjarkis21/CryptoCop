@@ -29,6 +29,14 @@ namespace Cryptocop.Software.API.Extensions
                     {
                         statusCode = (int)HttpStatusCode.Unauthorized;
                     }
+                    else if (exception is ProductException)
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest;
+                    }
+                    else if (exception is CartItemException)
+                    {
+                        statusCode = (int)HttpStatusCode.NotFound;
+                    }
                     else
                     {
                         statusCode = (int)HttpStatusCode.InternalServerError;

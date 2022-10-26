@@ -26,6 +26,10 @@ builder.Services.AddHttpClient<ICryptoCurrencyService, CryptoCurrencyService>(cl
     client.BaseAddress = new Uri("https://data.messari.io/api/");
 });
 
+builder.Services.AddHttpClient<IShoppingCartService, ShoppingCartService>(client => {
+    client.BaseAddress = new Uri("https://data.messari.io/api/");
+});
+
 builder.Services.AddAuthentication(config =>
 {
     config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,6 +62,9 @@ builder.Services.AddTransient<ITokenRepository, TokenRepository>();
 builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
 builder.Services.AddTransient<IAddressService, AddressService>();
 builder.Services.AddTransient<IAddressRepository, AddressRepository>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
+builder.Services.AddTransient<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();

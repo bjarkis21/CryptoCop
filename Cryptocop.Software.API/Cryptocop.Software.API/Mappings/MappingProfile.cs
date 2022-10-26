@@ -15,6 +15,13 @@ namespace Cryptocop.Software.API.Mappings
         {
             CreateMap<AddressInputModel, Address>();
             CreateMap<Address, AddressDto>();
+            CreateMap<PaymentCardInputModel, PaymentCard>();
+            CreateMap<PaymentCard, PaymentCardDto>();
+            CreateMap<ShoppingCartItem, ShoppingCartItemDto>()
+                .ForMember(
+                    dest => dest.TotalPrice,
+                    opt => opt.MapFrom<TotalPriceResolver>()
+                );
         }
     }
 }
