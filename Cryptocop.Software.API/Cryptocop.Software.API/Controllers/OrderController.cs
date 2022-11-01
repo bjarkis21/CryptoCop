@@ -31,5 +31,15 @@ namespace Cryptocop.Software.API.Controllers
 
             return StatusCode(201);
         }
+
+        [HttpGet]
+        [Route("")]
+        [Authorize]
+        public IActionResult GetOrders()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == "name")!.Value;
+
+            return Ok(_orderService.GetOrders(email));
+        }
     }
 }

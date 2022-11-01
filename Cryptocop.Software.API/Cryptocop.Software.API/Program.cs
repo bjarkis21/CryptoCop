@@ -67,6 +67,7 @@ builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 builder.Services.AddTransient<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();

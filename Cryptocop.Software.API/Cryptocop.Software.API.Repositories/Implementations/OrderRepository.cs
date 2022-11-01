@@ -22,7 +22,34 @@ namespace Cryptocop.Software.API.Repositories.Implementations
 
         public IEnumerable<OrderDto> GetOrders(string email)
         {
-            throw new NotImplementedException();
+            return _dbContext.Orders.AsNoTracking()
+                    .Where(o => o.User.Email == email)
+                    .Select(order => new OrderDto 
+                    {
+                        Id = order.Id,
+                        Email = order.Email,
+                        FullName = order.FullName,
+                        StreetName = order.StreetName,
+                        HouseNumber = order.HouseNumber,
+                        ZipCode = order.ZipCode,
+                        Country = order.Country,
+                        City = order.City,
+                        CardHolderName = order.CardHolderName,
+                        CreditCard = order.User.PaymentCards
+                                    .Where(pc => pc.CardNumber.Substring(pc.CardNumber.Length-4) == order.MaskedCreditCard.Substring(order.MaskedCreditCard.Length-4))
+                                    .Select(p => p.CardNumber)
+                                    .FirstOrDefault(),
+                        OrderDate = order.OrderDate.ToString("dd.MM.yyyy"),
+                        TotalPrice = order.TotalPrice,
+                        OrderItems = order.OrderItems.Select(i => new OrderItemDto
+                        {
+                            Id = i.Id,
+                            ProductIdentifier = i.ProductIdentifier,
+                            Quantity = i.Quantity,
+                            UnitPrice = i.UnitPrice,
+                            TotalPrice = i.TotalPrice
+                        }).ToList()
+                    });
         }
 
         public OrderDto CreateNewOrder(string email, OrderInputModel order)
@@ -101,7 +128,7 @@ namespace Cryptocop.Software.API.Repositories.Implementations
                 StreetName = newOrder.StreetName,
                 CardHolderName = newOrder.CardHolderName,
                 CreditCard = paymentCard.CardNumber,
-                OrderDate = newOrder.OrderDate.ToString("MM.dd.yyyy"),
+                OrderDate = newOrder.OrderDate.ToString("dd.MM.yyyy"),
                 TotalPrice = newOrder.TotalPrice,
                 OrderItems = newOrder.OrderItems.Select(i => new OrderItemDto {
                     Id = i.Id,

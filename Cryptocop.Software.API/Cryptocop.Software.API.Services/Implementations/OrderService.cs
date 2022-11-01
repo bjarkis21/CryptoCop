@@ -10,23 +10,25 @@ namespace Cryptocop.Software.API.Services.Implementations
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
+        private readonly IQueueService _queueService;
 
-        public OrderService(IOrderRepository orderRepository, IShoppingCartRepository shoppingCartRepository)
+        public OrderService(IOrderRepository orderRepository, IShoppingCartRepository shoppingCartRepository, IQueueService queueService)
         {
             _orderRepository = orderRepository;
             _shoppingCartRepository = shoppingCartRepository;
+            _queueService = queueService;
         }
 
         public IEnumerable<OrderDto> GetOrders(string email)
         {
-            throw new System.NotImplementedException();
+            return _orderRepository.GetOrders(email);
         }
 
         public void CreateNewOrder(string email, OrderInputModel order)
         {
             var newOrder = _orderRepository.CreateNewOrder(email, order);
             _shoppingCartRepository.ClearCart(email);
-            // TODO: Send RabbitMQ message
+            _queueService.PublishMessage("create-order", newOrder);
         }
     }
 }

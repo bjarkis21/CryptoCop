@@ -16,6 +16,7 @@ namespace Cryptocop.Software.API.Repositories.Implementations
 
         public JwtTokenDto CreateNewToken()
         {
+            // Implemented in UserRepository
             throw new System.NotImplementedException();
         }
 
