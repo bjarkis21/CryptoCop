@@ -13,20 +13,33 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<CryptoCopDbContext>(options => {
+if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+{
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(5000);
+        options.ListenAnyIP(5001, listenOptions => listenOptions.UseHttps());
+    });
+}
+
+builder.Services.AddDbContext<CryptoCopDbContext>(options =>
+{
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"),
     b => b.MigrationsAssembly("Cryptocop.Software.API"));
 });
 
-builder.Services.AddHttpClient<IExchangeService, ExchangeService>(client => {
+builder.Services.AddHttpClient<IExchangeService, ExchangeService>(client =>
+{
     client.BaseAddress = new Uri("https://data.messari.io/api/");
 });
 
-builder.Services.AddHttpClient<ICryptoCurrencyService, CryptoCurrencyService>(client => {
+builder.Services.AddHttpClient<ICryptoCurrencyService, CryptoCurrencyService>(client =>
+{
     client.BaseAddress = new Uri("https://data.messari.io/api/");
 });
 
-builder.Services.AddHttpClient<IShoppingCartService, ShoppingCartService>(client => {
+builder.Services.AddHttpClient<IShoppingCartService, ShoppingCartService>(client =>
+{
     client.BaseAddress = new Uri("https://data.messari.io/api/");
 });
 
@@ -41,7 +54,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
-builder.Services.AddControllers().AddJsonOptions(options => {
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

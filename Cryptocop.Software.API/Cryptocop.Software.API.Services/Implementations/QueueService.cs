@@ -19,9 +19,20 @@ namespace Cryptocop.Software.API.Services.Implementations
 
             _exchangeName = configSection.GetValue<string>("Exchange");
 
+            var HostName = configSection.GetValue<string>("Host");
+            var UserName = configSection.GetValue<string>("UserName");
+            var Password = configSection.GetValue<string>("Password");
+            var VirtualHost = configSection.GetValue<string>("VirtualHost");
+
+            Console.WriteLine("HELLOHELLO");
+            Console.WriteLine(HostName + " " + UserName + " " + Password + " " + VirtualHost);
+
             IAsyncConnectionFactory connectionFactory = new ConnectionFactory
             {
-                HostName = configSection.GetValue<string>("Host")
+                HostName = configSection.GetValue<string>("Host"),
+                UserName = configSection.GetValue<string>("UserName"),
+                Password = configSection.GetValue<string>("Password"),
+                VirtualHost = configSection.GetValue<string>("VirtualHost")
             };
             _connection = connectionFactory.CreateConnection();
             _channel = _connection.CreateModel();

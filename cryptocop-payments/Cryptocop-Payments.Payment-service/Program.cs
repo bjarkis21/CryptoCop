@@ -27,46 +27,64 @@ var configuration = new ConfigurationBuilder()
 var configSection = configuration.GetSection("RabbitMQ");
 
 var host = configSection.GetValue<string>("Host");
+var userName = configSection.GetValue<string>("UserName");
+var password = configSection.GetValue<string>("Password");
+var virtualHost = configSection.GetValue<string>("VirtualHost");
 var exchange = configSection.GetValue<string>("Exchange");
 var queue = configSection.GetValue<string>("Queue");
 var routingKey = configSection.GetValue<string>("RoutingKey");
 
-var factory = new ConnectionFactory() { HostName = host };
-using (var connection = factory.CreateConnection())
-using (var channel = connection.CreateModel())
+var error = true;
+
+while (error)
 {
-    channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Topic);
-
-    channel.QueueDeclare(queue: queue, durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-    channel.QueueBind(queue: queue, exchange: exchange, routingKey: routingKey);
-
-    Console.WriteLine(" [*] Wating for orders.");
-
-    var consumer = new EventingBasicConsumer(channel);
-    consumer.Received += (model, ea) =>
+    try
     {
-        var body = ea.Body.ToArray();
-        var orderStr = Encoding.UTF8.GetString(body);
-        var inputModel = JsonSerializerHelper.DeserializeWithCamelCasing<OrderInputModel>(orderStr);
-        var orderId = inputModel?.Id;
-        var card = inputModel?.CreditCard;
 
-        CreditCardDetector detector = new CreditCardDetector(card);
-
-        if (detector.IsValid())
+        var factory = new ConnectionFactory() { HostName = host, UserName = userName, Password = password, VirtualHost = virtualHost };
+        using (var connection = factory.CreateConnection())
+        using (var channel = connection.CreateModel())
         {
-            Console.WriteLine($"OrderId {orderId}: CreditCard {card} is valid");
+            channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Topic);
+
+            channel.QueueDeclare(queue: queue, durable: false, exclusive: false, autoDelete: false, arguments: null);
+
+            channel.QueueBind(queue: queue, exchange: exchange, routingKey: routingKey);
+
+            Console.WriteLine(" [*] Wating for orders.");
+
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var orderStr = Encoding.UTF8.GetString(body);
+                var inputModel = JsonSerializerHelper.DeserializeWithCamelCasing<OrderInputModel>(orderStr);
+                var orderId = inputModel?.Id;
+                var card = inputModel?.CreditCard;
+
+                CreditCardDetector detector = new CreditCardDetector(card);
+
+                if (detector.IsValid())
+                {
+                    Console.WriteLine($"OrderId {orderId}: CreditCard {card} is valid");
+                }
+                else
+                {
+                    Console.WriteLine($"OrderId {orderId}: CreditCard {card} is invalid");
+                }
+            };
+            channel.BasicConsume(queue: queue, autoAck: true, consumer: consumer);
+
+            error = false;
+            while (true)
+            {
+            Console.ReadLine();
+            }
         }
-        else 
-        {
-            Console.WriteLine($"OrderId {orderId}: CreditCard {card} is invalid");
-        }
-    };
-    channel.BasicConsume(queue: queue, autoAck: true, consumer: consumer);
+    }
+    catch (Exception e)
+    {
+        continue;
+    }
 
-
-
-    Console.WriteLine(" Press [enter] to exit.");
-    Console.ReadLine();
 }

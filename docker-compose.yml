@@ -1,0 +1,38 @@
+version: '3'
+services:
+  message-broker:
+    image: rabbitmq
+    container_name: message-broker
+    environment:
+      RABBITMQ_DEFAULT_USER: user 
+      RABBITMQ_DEFAULT_PASS: pass
+      RABBITMQ_DEFAULT_VHOST: /
+    networks:
+      - "cryptocop-network"
+  payment-service:
+    build: ./cryptocop-payments
+    container_name: payment-service
+    depends_on:
+      - message-broker
+    networks:
+      - "cryptocop-network"
+  email-service:
+    build: ./cryptocop-emails
+    container_name: email-service
+    depends_on:
+      - message-broker
+    networks:
+      - "cryptocop-network"
+  cryptocop-api:
+    build: ./Cryptocop.Software.API
+    container_name: cryptocop-api
+    depends_on:
+      - message-broker
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    networks:
+      - "cryptocop-network"
+networks:
+  cryptocop-network:
+    driver: bridge
