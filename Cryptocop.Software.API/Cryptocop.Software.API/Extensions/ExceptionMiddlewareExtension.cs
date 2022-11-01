@@ -37,6 +37,14 @@ namespace Cryptocop.Software.API.Extensions
                     {
                         statusCode = (int)HttpStatusCode.NotFound;
                     }
+                    else if (exception is OrderException)
+                    {
+                        statusCode = (int)HttpStatusCode.BadRequest;
+                    }
+                    else if (exception is ResourceNotFoundException)
+                    {
+                        statusCode = (int)HttpStatusCode.NotFound;
+                    }
                     else
                     {
                         statusCode = (int)HttpStatusCode.InternalServerError;

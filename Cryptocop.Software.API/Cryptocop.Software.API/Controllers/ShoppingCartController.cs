@@ -29,7 +29,7 @@ namespace Cryptocop.Software.API.Controllers
 
             await _shoppingCartService.AddCartItem(email, item);
 
-            return StatusCode(200);
+            return StatusCode(201);
         }
 
         [HttpGet]

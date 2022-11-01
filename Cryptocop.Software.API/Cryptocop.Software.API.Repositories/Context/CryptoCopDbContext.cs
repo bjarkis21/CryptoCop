@@ -17,5 +17,7 @@ namespace Cryptocop.Software.API.Repositories.Context
         public DbSet<PaymentCard> PaymentCards {get; set;}
         public DbSet<ShoppingCart> ShoppingCarts {get; set;}
         public DbSet<ShoppingCartItem> ShoppingCartItems {get; set;}
+        public DbSet<Order> Orders {get; set;}
+        public DbSet<OrderItem> OrderItems {get; set;}
     }
 }

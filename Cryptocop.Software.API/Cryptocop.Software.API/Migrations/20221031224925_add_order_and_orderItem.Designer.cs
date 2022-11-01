@@ -3,6 +3,7 @@ using System;
 using Cryptocop.Software.API.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cryptocop.Software.API.Migrations
 {
     [DbContext(typeof(CryptoCopDbContext))]
-    partial class CryptoCopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221031224925_add_order_and_orderItem")]
+    partial class add_order_and_orderItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,7 +121,7 @@ namespace Cryptocop.Software.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.OrderItem", b =>
@@ -149,7 +151,7 @@ namespace Cryptocop.Software.API.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("Cryptocop.Software.API.Repositories.Entities.PaymentCard", b =>

@@ -15,5 +15,6 @@ namespace Cryptocop.Software.API.Repositories.Entities
         public ICollection<Address> Addresses {get; set;}
         public ICollection<PaymentCard> PaymentCards {get; set;}
         public ShoppingCart ShoppingCart {get; set;}
+        public ICollection<Order> Orders {get; set;}
     }
 }

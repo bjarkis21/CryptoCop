@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cryptocop.Software.API.Models.Dtos
+namespace Cryptocop.Software.API.Repositories.Entities
 {
-    public class OrderDto
+    public class Order
     {
         public int Id {get; set;}
         public string Email {get; set;}
@@ -16,9 +16,11 @@ namespace Cryptocop.Software.API.Models.Dtos
         public string Country {get; set;}
         public string City {get; set;}
         public string CardHolderName {get; set;}
-        public string CreditCard {get; set;}
-        public string OrderDate {get; set;}
+        public string MaskedCreditCard {get; set;}
+        public DateTime OrderDate {get; set;}
         public Double TotalPrice {get; set;}
-        public List<OrderItemDto> OrderItems {get; set;}
+
+        public ICollection<OrderItem> OrderItems {get; set;}
+        public User User {get; set;}
     }
 }
